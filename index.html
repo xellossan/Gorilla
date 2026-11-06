@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>VR Gorillas 3D - 1v1 Banana Blitz</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Three.js and WebXR helpers -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- PeerJS for WebRTC Data & Voice Audio Chat -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+  <div id="game-container"></div>
+
+  <!-- Lobby & Room Setup Screen -->
+  <div id="lobby-screen" class="overlay-panel">
+    <div class="lobby-card">
+      <h1>🦍 VR GORILLAS 3D</h1>
+      <p class="subtitle">1v1 Turn-Based Banana Artillery Remake</p>
+      
+      <div class="settings-grid">
+        <div class="setting-item">
+          <label for="turn-time">Turn Duration (Seconds):</label>
+          <input type="number" id="turn-time" min="10" max="90" value="30">
+        </div>
+        <div class="setting-item">
+          <label for="banana-count">Bananas Per Turn:</label>
+          <input type="number" id="banana-count" min="1" max="10" value="5">
+        </div>
+        <div class="setting-item">
+          <label for="win-score">Score To Win:</label>
+          <input type="number" id="win-score" min="1" max="10" value="3">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="lobby-actions">
+        <div class="action-box">
+          <h3>Host Room Name</h3>
+          <input type="text" id="host-custom-room-id" value="Xellossan" placeholder="Room Name" maxlength="24">
+          <button id="btn-create-room" class="btn primary-btn">Host Room</button>
+          <div id="host-info" class="hidden">
+            <p>Active Room Name:</p>
+            <div class="room-code-badge" id="host-room-id">Xellossan</div>
+            <div class="spinner"></div>
+            <p class="waiting-text">Waiting for opponent to connect & voice chat...</p>
+          </div>
+        </div>
+
+        <div class="action-box">
+          <h3>Join Match</h3>
+          <input type="text" id="join-room-id" value="Xellossan" placeholder="Room Name" maxlength="24">
+          <button id="btn-join-room" class="btn secondary-btn">Join Game</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="solo-box">
+        <button id="btn-solo-practice" class="btn text-btn">Solo / Target Practice Mode (Single Player)</button>
+      </div>
+
+      <div class="device-note">
+        <p><strong>VR (Meta Quest):</strong> Left Stick = Move | Right Stick = Turn | Hold Trigger = Ready Banana | Swing controller & release Trigger to throw with authentic velocity & launch angle!</p>
+        <p><strong>VR Side Wall Board:</strong> Check the large stadium display mounted on the court side wall for live Scores, Wind, Turn Status, and end-game <em>YOU WIN! / YOU LOSE!</em> announcement. Aim your controller ray at the <strong>Restart Match</strong> button on the wall and pull Trigger.</p>
+        <p><strong>Turn & Timer Sync:</strong> Turns alternate immediately when a player depletes their bananas or time expires. The host drives the synchronized turn timer across both headsets with zero desync.</p>
+        <p><strong>Desktop Browser:</strong> Click Screen to Lock Mouse | WASD = Move | Hold Left Click = Charge & Aim | Release = Throw.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-Game 2D HUD (Desktop Overlay) -->
+  <div id="game-hud" class="hidden">
+    <div class="hud-top-bar">
+      <div class="player-card p1">
+        <span class="p-name" id="hud-p1-label">Player 1</span>
+        <span class="p-score" id="hud-p1-score">0</span>
+      </div>
+      <div class="turn-status-card">
+        <div id="hud-turn-indicator" class="turn-indicator">WAITING...</div>
+        <div id="hud-timer" class="timer-display">30s</div>
+        <div id="hud-banana-ammo" class="ammo-display">🍌 5 left</div>
+      </div>
+      <div class="player-card p2">
+        <span class="p-name" id="hud-p2-label">Player 2</span>
+        <span class="p-score" id="hud-p2-score">0</span>
+      </div>
+    </div>
+
+    <!-- Wind Gauge -->
+    <div class="wind-widget">
+      <div class="wind-title">WIND COND.</div>
+      <div class="wind-arrow-container">
+        <div id="wind-arrow" class="wind-arrow">➤</div>
+      </div>
+      <div id="wind-speed" class="wind-speed">0.0 m/s</div>
+    </div>
+
+    <!-- Floating Action Bar -->
+    <div class="voice-bar">
+      <button id="btn-restart-desktop" class="hud-btn restart-btn">🔄 Restart Match</button>
+      <button id="btn-mic-toggle" class="hud-btn mic-on">🎙️ Mic: ON</button>
+      <button id="btn-vr-enter" class="hud-btn vr-btn">🥽 Enter VR</button>
+    </div>
+
+    <div id="desktop-reticle"></div>
+    <div id="throw-power-container" class="hidden">
+      <div id="throw-power-bar"></div>
+    </div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="game-over-screen" class="overlay-panel hidden">
+    <div class="lobby-card end-card">
+      <h1 id="winner-title">PLAYER 1 WINS!</h1>
+      <p id="winner-details">Final Score: 3 - 1</p>
+      <button id="btn-restart" class="btn primary-btn">Play Again</button>
+    </div>
+  </div>
+
+  <audio id="remote-audio" autoplay></audio>
+
+  <script src="js/audio.js"></script>
+  <script src="js/network.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "neighborhood-blaster-1v1",
+  "version": "1.0.0",
+  "description": "Multiplayer 1v1 Blaster Arena with Meta Quest VR and Desktop Browser crossplay, exploding white balls, score tracking, and WebRTC voice chat.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "peer": "^1.0.1"
+  }
+}
